@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PresupuestoPro — Presupuestos y facturas en segundos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0a1e50;
+    --blue: #1540a0;
+    --accent: #3b82f6;
+    --green: #10b981;
+    --yellow: #fbbf24;
+    --ink: #0f172a;
+    --ink2: #475569;
+    --ink3: #94a3b8;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --r: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,.06);
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-cta {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    padding: 10px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: .9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(10,30,80,.2); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(160deg, #0a1e50 0%, #1540a0 50%, #0a1e50 100%);
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,.3) 0%, transparent 70%);
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .hero-badge {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: rgba(255,255,255,.9);
+    margin-bottom: 28px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  .hero h1 {
+    position: relative; z-index: 1;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    line-height: 1.05;
+    color: #fff;
+    max-width: 800px;
+    margin-bottom: 24px;
+    animation: fadeUp .6s .1s ease both;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--yellow);
+  }
+  .hero-sub {
+    position: relative; z-index: 1;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: rgba(255,255,255,.75);
+    max-width: 520px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    animation: fadeUp .6s .2s ease both;
+  }
+  .hero-actions {
+    position: relative; z-index: 1;
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp .6s .3s ease both;
+  }
+  .btn-primary {
+    background: var(--yellow);
+    color: var(--navy);
+    border: none;
+    border-radius: 100px;
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(251,191,36,.4); }
+  .btn-ghost {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 100px;
+    padding: 16px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,.18); }
+
+  /* ── PHONE MOCKUP ── */
+  .hero-phone {
+    position: relative; z-index: 1;
+    margin-top: 60px;
+    animation: fadeUp .6s .4s ease both;
+  }
+  .phone-frame {
+    width: 260px;
+    background: #0f172a;
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 40px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.1);
+    margin: 0 auto;
+  }
+  .phone-screen {
+    background: linear-gradient(135deg, #0a1e50, #1540a0);
+    border-radius: 30px;
+    overflow: hidden;
+    padding: 20px 16px;
+  }
+  .phone-notch {
+    width: 80px; height: 8px;
+    background: #0f172a;
+    border-radius: 100px;
+    margin: 0 auto 16px;
+  }
+  .phone-header {
+    font-family: 'Fraunces', serif;
+    font-size: .9rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .phone-doc {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+  .phone-doc-title { font-size: .7rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+  .phone-doc-sub { font-size: .62rem; color: rgba(255,255,255,.55); }
+  .phone-doc-amount { font-size: .85rem; font-weight: 800; color: var(--yellow); margin-top: 6px; }
+  .phone-chip {
+    display: inline-block;
+    font-size: .55rem; font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-top: 4px;
+  }
+  .chip-green { background: rgba(16,185,129,.2); color: #10b981; }
+  .chip-amber { background: rgba(251,191,36,.2); color: #fbbf24; }
+  .phone-btn {
+    width: 100%;
+    background: var(--yellow);
+    color: var(--navy);
+    border: none;
+    border-radius: 100px;
+    padding: 10px;
+    font-weight: 700;
+    font-size: .75rem;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  /* ── SOCIAL PROOF ── */
+  .social-proof {
+    background: #fff;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .proof-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: .88rem; color: var(--ink2); font-weight: 500;
+  }
+  .proof-icon { font-size: 1.2rem; }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 24px; }
+  .section-label {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.15;
+    color: var(--ink);
+    max-width: 600px;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ── HOW IT WORKS ── */
+  .how { background: #fff; }
+  .how-inner { max-width: 1100px; margin: 0 auto; }
+  .how-header { text-align: center; margin-bottom: 70px; }
+  .how-header .section-title { margin: 0 auto; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 40px;
+  }
+  .step {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .5s, transform .5s;
+  }
+  .step.visible { opacity: 1; transform: none; }
+  .step-num {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(21,64,160,.3);
+  }
+  .step h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .step p { font-size: .9rem; color: var(--ink2); line-height: 1.6; }
+
+  /* ── FEATURES ── */
+  .features { background: var(--bg); }
+  .features-inner { max-width: 1100px; margin: 0 auto; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .feature-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px;
+    border: 1px solid #e2e8f0;
+    transition: transform .2s, box-shadow .2s;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .4s, transform .4s, box-shadow .2s;
+  }
+  .feature-card.visible { opacity: 1; transform: none; }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.08); }
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .feature-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .feature-card p { font-size: .9rem; color: var(--ink2); line-height: 1.6; }
+  .feature-card.featured {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-color: transparent;
+    color: #fff;
+  }
+  .feature-card.featured h3 { color: #fff; }
+  .feature-card.featured p { color: rgba(255,255,255,.75); }
+
+  /* ── FOR WHO ── */
+  .forwho { background: #fff; }
+  .forwho-inner { max-width: 1100px; margin: 0 auto; }
+  .forwho-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-top: 50px;
+  }
+  .who-card {
+    background: var(--bg);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 16px;
+    text-align: center;
+    transition: border-color .2s, transform .2s;
+    cursor: default;
+  }
+  .who-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .who-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+  .who-card span { font-size: .85rem; font-weight: 600; color: var(--ink2); }
+
+  /* ── PRICING ── */
+  .pricing { background: var(--bg); }
+  .pricing-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 50px;
+  }
+  .plan {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 36px 28px;
+    text-align: left;
+    position: relative;
+    transition: transform .2s;
+  }
+  .plan:hover { transform: translateY(-4px); }
+  .plan.popular {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(21,64,160,.08);
+  }
+  .plan-badge {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--navy); color: #fff;
+    font-size: .7rem; font-weight: 800;
+    padding: 4px 16px; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .plan-name { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink3); margin-bottom: 8px; }
+  .plan-price {
+    font-family: 'Fraunces', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .plan-price span { font-size: 1rem; font-weight: 500; color: var(--ink3); }
+  .plan-save { font-size: .8rem; color: var(--green); font-weight: 700; margin-bottom: 24px; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .plan-features li { font-size: .88rem; color: var(--ink2); display: flex; align-items: center; gap: 8px; }
+  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
+  .plan-free { font-size: .8rem; color: var(--ink3); text-align: center; margin-top: 20px; }
+  .plan-free strong { color: var(--ink2); }
+  .btn-plan {
+    width: 100%;
+    padding: 14px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn-plan-primary {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+  }
+  .btn-plan-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,30,80,.25); }
+  .btn-plan-outline {
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid #e2e8f0;
+  }
+  .btn-plan-outline:hover { border-color: var(--ink); }
+
+  /* ── CTA FINAL ── */
+  .cta-final {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    text-align: center;
+    padding: 100px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-final::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .cta-final h2 {
+    position: relative; z-index: 1;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .cta-final h2 em { font-style: italic; color: var(--yellow); }
+  .cta-final p {
+    position: relative; z-index: 1;
+    font-size: 1.1rem;
+    color: rgba(255,255,255,.75);
+    margin-bottom: 40px;
+    max-width: 480px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.6;
+  }
+  .cta-final-actions { position: relative; z-index: 1; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--ink3);
+    font-size: .85rem;
+  }
+  footer strong { color: #fff; font-family: 'Fraunces', serif; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.4); }
+    50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .phone-frame { animation: float 4s ease-in-out infinite; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    nav { padding: 14px 20px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .social-proof { gap: 20px; padding: 20px; }
+    .who-card span { font-size: .78rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Presupuesto<span>Pro</span></a>
+  <a href="https://vekto-dev.github.io/presupuestopro/" class="nav-cta">Empezar gratis →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    Disponible ahora · Gratis para empezar
+  </div>
+
+  <h1>Presupuestá en el<br/><em>momento exacto</em></h1>
+
+  <p class="hero-sub">
+    Creá presupuestos y facturas profesionales desde tu celular, en el lugar de trabajo, en menos de 2 minutos.
+  </p>
+
+  <div class="hero-actions">
+    <a href="https://vekto-dev.github.io/presupuestopro/" class="btn-primary">
+      🚀 Empezar gratis
+    </a>
+    <a href="#como-funciona" class="btn-ghost">
+      Ver cómo funciona
+    </a>
+  </div>
+
+  <div class="hero-phone">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-header">📋 Nuevo presupuesto</div>
+        <div class="phone-doc">
+          <div class="phone-doc-title">Instalación eléctrica</div>
+          <div class="phone-doc-sub">Cliente: Martín García</div>
+          <div class="phone-doc-amount">$85.000</div>
+          <div class="phone-chip chip-green">✓ Aprobado</div>
+        </div>
+        <div class="phone-doc">
+          <div class="phone-doc-title">Plomería baño</div>
+          <div class="phone-doc-sub">Cliente: Ana López</div>
+          <div class="phone-doc-amount">$42.500</div>
+          <div class="phone-chip chip-amber">⏳ Pendiente</div>
+        </div>
+        <button class="phone-btn">+ Nuevo documento</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div class="social-proof">
+  <div class="proof-item"><span class="proof-icon">⚡</span> Listo en 2 minutos</div>
+  <div class="proof-item"><span class="proof-icon">📱</span> Funciona en el celular</div>
+  <div class="proof-item"><span class="proof-icon">📄</span> PDF profesional</div>
+  <div class="proof-item"><span class="proof-icon">🔒</span> Tus datos seguros</div>
+  <div class="proof-item"><span class="proof-icon">🇦🇷</span> Hecho en Argentina</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="como-funciona">
+  <div class="how-inner">
+    <div class="how-header">
+      <div class="section-label">Así de simple</div>
+      <h2 class="section-title">De la obra al cliente<br/><em>en tres pasos</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Abrís la app</h3>
+        <p>Sin instalación, directo desde el navegador. Entrás, creás tu cuenta y listo. En 30 segundos estás adentro.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Cargás el trabajo</h3>
+        <p>Describís los ítems, cantidades y precios. La app calcula todo automáticamente: IVA, descuentos, total.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Enviás al cliente</h3>
+        <p>Descargás el PDF o lo compartís por WhatsApp al instante. Tu cliente lo recibe en segundos con tu imagen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="funciones">
+  <div class="features-inner">
+    <div class="section-label">Funciones</div>
+    <h2 class="section-title">Todo lo que necesitás,<br/><em>nada de lo que no</em></h2>
+    <div class="features-grid">
+      <div class="feature-card featured">
+        <span class="feature-icon">⚡</span>
+        <h3>Rápido de verdad</h3>
+        <p>Diseñado para que puedas crear un presupuesto completo mientras hablás con el cliente, sin perder tiempo.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📄</span>
+        <h3>PDF profesional</h3>
+        <p>Tu presupuesto sale con tu nombre, logo y datos. El cliente lo recibe como si fuera de una empresa grande.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔄</span>
+        <h3>Presupuesto a factura</h3>
+        <p>Cuando te dan la seña o aprueban el trabajo, convertís el presupuesto en factura con un toque.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">👥</span>
+        <h3>Agenda de clientes</h3>
+        <p>Guardás tus clientes y los tenés siempre a mano. WhatsApp directo, historial de trabajos, sin buscar en el celular.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <h3>Control de lo que cobrás</h3>
+        <p>Ves cuánto facturaste este mes, qué trabajos están pendientes de cobro y cuáles ya te pagaron.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📱</span>
+        <h3>Funciona en el celular</h3>
+        <p>No necesitás la computadora. Abrís desde el celular, creás el documento y lo enviás. Listo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHO -->
+<section class="forwho" id="para-quien">
+  <div class="forwho-inner">
+    <div class="section-label">¿Para quién es?</div>
+    <h2 class="section-title">Para cualquiera que<br/><em>venda su trabajo</em></h2>
+    <div class="forwho-grid">
+      <div class="who-card"><span class="who-icon">⚡</span><span>Electricistas</span></div>
+      <div class="who-card"><span class="who-icon">🔧</span><span>Plomeros</span></div>
+      <div class="who-card"><span class="who-icon">🪚</span><span>Carpinteros</span></div>
+      <div class="who-card"><span class="who-icon">🎨</span><span>Diseñadores</span></div>
+      <div class="who-card"><span class="who-icon">📸</span><span>Fotógrafos</span></div>
+      <div class="who-card"><span class="who-icon">🏗️</span><span>Constructores</span></div>
+      <div class="who-card"><span class="who-icon">🖥️</span><span>Programadores</span></div>
+      <div class="who-card"><span class="who-icon">💆</span><span>Esteticistas</span></div>
+      <div class="who-card"><span class="who-icon">🚗</span><span>Mecánicos</span></div>
+      <div class="who-card"><span class="who-icon">🌿</span><span>Paisajistas</span></div>
+      <div class="who-card"><span class="who-icon">📋</span><span>Consultores</span></div>
+      <div class="who-card"><span class="who-icon">✂️</span><span>Y muchos más</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="precios">
+  <div class="pricing-inner">
+    <div class="section-label">Precios</div>
+    <h2 class="section-title" style="margin:0 auto">Simple y sin sorpresas</h2>
+    <div class="pricing-grid">
+
+      <div class="plan">
+        <div class="plan-name">Mensual</div>
+        <div class="plan-price">$5.000<span>/mes</span></div>
+        <div class="plan-save">&nbsp;</div>
+        <ul class="plan-features">
+          <li>Documentos ilimitados</li>
+          <li>Clientes ilimitados</li>
+          <li>PDF sin marca de agua</li>
+          <li>Acceso desde cualquier dispositivo</li>
+          <li>Cancelás cuando querés</li>
+        </ul>
+        <a href="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=3580fc9731af44ba9e9a87ed66baa978" class="btn-plan btn-plan-outline" target="_blank">
+          Suscribirme mensual
+        </a>
+      </div>
+
+      <div class="plan popular">
+        <div class="plan-badge">⭐ MÁS POPULAR</div>
+        <div class="plan-name">Anual</div>
+        <div class="plan-price">$50.000<span>/año</span></div>
+        <div class="plan-save">Ahorrás $10.000 vs mensual</div>
+        <ul class="plan-features">
+          <li>Todo lo del plan mensual</li>
+          <li>Prioridad en soporte</li>
+          <li>Acceso a nuevas funciones</li>
+          <li>Precio fijo por 12 meses</li>
+          <li>Tranquilidad total</li>
+        </ul>
+        <a href="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=015eaa3a041a48df8e6762f4c9df9b47" class="btn-plan btn-plan-primary" target="_blank">
+          Suscribirme anual
+        </a>
+      </div>
+
+    </div>
+    <p class="plan-free">¿Querés probar antes? <strong>El plan gratuito incluye 50 documentos/mes</strong> para que lo conozcas sin pagar nada.</p>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Empezá hoy,<br/><em>gratis</em></h2>
+  <p>Sin tarjeta de crédito. Sin instalación. En dos minutos ya estás creando tu primer presupuesto.</p>
+  <div class="cta-final-actions">
+    <a href="https://vekto-dev.github.io/presupuestopro/" class="btn-primary">
+      🚀 Crear mi cuenta gratis
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>PresupuestoPro</strong> · Hecho con ❤️ en Argentina · 2025</p>
+  <p style="margin-top:8px">Para emprendedores que no tienen tiempo que perder.</p>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.step, .feature-card').forEach(el => observer.observe(el));
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
